@@ -1,0 +1,9 @@
+[package]
+name = "rsgenetics"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+clap = { version = "3.1.2", features = ["derive"] }
+bio = "0.39.2"
+rdxsort = "0.3.0"
