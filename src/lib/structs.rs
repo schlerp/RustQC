@@ -1,12 +1,3 @@
-pub struct QCReport {
-    name: String,
-    path: String,
-    seq_position_scores: Vec<Vec<u32>>,
-    qual_by_position: QualityByPosition,
-    qual_by_seq: QualityBySequence,
-    base_by_position: BaseByPosition,
-}
-
 pub struct QualityByPosition {
     pub seq_position_means: Vec<f32>,
     pub seq_position_medians: Vec<f32>,
@@ -24,8 +15,9 @@ pub struct QualityBySequence {
 }
 
 pub struct BaseByPosition {
-    a_bases: Vec<u32>,
-    c_bases: Vec<u32>,
-    g_bases: Vec<u32>,
-    t_bases: Vec<u32>,
+    pub a_bases: Vec<u32>,
+    pub c_bases: Vec<u32>,
+    pub g_bases: Vec<u32>,
+    pub t_bases: Vec<u32>,
+    pub other_bases: Vec<u32>,
 }

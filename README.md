@@ -3,7 +3,7 @@
 It's a quality checking tool for fastq files like FastQC except its implemented in rust and outputs its QC's as plain text.
 
 ```bash
-rustqc --path /path/to/file.fastq
+rustqc --path /path/to/file.fastq[.gz]
 ```
 
 Currently very alpha but showing some promising speed and I personally really like ASCII charts. Currently only implementing a single QC check which is the quality by position report. See example output below for a 400MB fastq file processed on my laptop in ~8 seconds.
@@ -12,12 +12,12 @@ Currently very alpha but showing some promising speed and I personally really li
 RustQC Report
 =============
 
-File: /home/schlerp/Downloads/MSHR8970_MIXED_1_sequence.fastq.gz
+File: /tmp/test.fastq.gz
 
 Quality by Sequence Position
 ----------------------------
-  A box plot representation of each position in the reads.
-  Median takes highest precedence, followed by q1/q3 finally followed by min/max.
+
+Median takes highest precedence, followed by q1/q3 finally followed by min/max.
 
                             <-----[     |     ]----->
                            min   q1   median  q3   max
@@ -36,16 +36,6 @@ pos   8: |            <----------------------------|        | (n=4956295, mean=3
 pos   9: |            <----------------------------|        | (n=4956295, mean=39.85)
 pos  10: |            <----------------------------|        | (n=4956295, mean=39.87)
 ...
-pos 130: |            <------------------------[   |        | (n=4956295, mean=36.11)
-pos 131: |  <----------------------------------[   |        | (n=4956295, mean=36.04)
-pos 132: |            <------------------------[   |        | (n=4956295, mean=35.94)
-pos 133: |            <------------------------[   |        | (n=4956295, mean=35.82)
-pos 134: |            <-------------------[        |        | (n=4956295, mean=35.70)
-pos 135: |  <-----------------------------[        |        | (n=4956295, mean=35.63)
-pos 136: |            <-------------------[        |        | (n=4956295, mean=35.48)
-pos 137: |            <-------------------[        |        | (n=4956295, mean=35.35)
-pos 138: |  <-----------------------------[        |        | (n=4956295, mean=35.25)
-pos 139: |            <-------------------[        |        | (n=4956295, mean=35.21)
 pos 140: |  <-----------------------------[        |        | (n=4956295, mean=35.05)
 pos 141: |  <-----------------------------[        |        | (n=4956295, mean=34.93)
 pos 142: |  <-----------------------------[        |        | (n=4956295, mean=34.78)
@@ -58,4 +48,37 @@ pos 148: |  <-----------------------------[        |        | (n=4956295, mean=3
 pos 149: |        <-----------------------[    |   ]        | (n=4956295, mean=33.83)
          |01234567890123456789012345678901234567890123456789|
          |          1         2         3         4         |
+
+
+Base Proportion Overall
+-----------------------
+
+Overall:        A: 17.3729%     C: 33.3369%     G: 32.1759%     T: 17.1143%     Other: 0.0023%
+
+
+Base Proportion by Sequence Position
+------------------------------------
+
+pos:    0       A: 14.6564%     C: 27.9173%     G: 48.5826%     T: 8.8437%      Other: 0.1915%
+pos:    1       A: 13.5042%     C: 32.8249%     G: 23.6822%     T: 29.9887%     Other: 0.0364%
+pos:    2       A: 14.1976%     C: 35.1707%     G: 28.8527%     T: 21.7790%     Other: 0.0000%
+pos:    3       A: 10.0427%     C: 44.7247%     G: 21.1248%     T: 24.1078%     Other: 0.0000%
+pos:    4       A: 26.8818%     C: 22.9977%     G: 23.7148%     T: 26.4058%     Other: 0.0073%
+pos:    5       A: 24.0816%     C: 21.4523%     G: 43.3721%     T: 11.0941%     Other: 0.0023%
+pos:    6       A: 21.8888%     C: 28.7826%     G: 35.5706%     T: 13.7580%     Other: 0.0000%
+pos:    7       A: 28.6704%     C: 24.7646%     G: 32.7583%     T: 13.8067%     Other: 0.0002%
+pos:    8       A: 10.8260%     C: 46.8033%     G: 27.2765%     T: 15.0941%     Other: 0.0000%
+pos:    9       A: 16.7214%     C: 40.4215%     G: 23.4408%     T: 19.4163%     Other: 0.0000%
+pos:   10       A: 14.8179%     C: 18.1790%     G: 53.1859%     T: 13.8172%     Other: 0.0000%
+...
+pos:  140       A: 20.0707%     C: 32.4024%     G: 29.8694%     T: 17.6575%     Other: 0.0001%
+pos:  141       A: 20.2064%     C: 31.9753%     G: 30.4812%     T: 17.3371%     Other: 0.0001%
+pos:  142       A: 21.0331%     C: 31.2994%     G: 29.3802%     T: 18.2873%     Other: 0.0001%
+pos:  143       A: 20.2772%     C: 32.2671%     G: 29.7233%     T: 17.7324%     Other: 0.0001%
+pos:  144       A: 20.4199%     C: 31.8306%     G: 30.3479%     T: 17.4017%     Other: 0.0074%
+pos:  145       A: 21.2502%     C: 31.1990%     G: 29.1999%     T: 18.3510%     Other: 0.0143%
+pos:  146       A: 20.5527%     C: 32.1561%     G: 29.5301%     T: 17.7611%     Other: 0.0000%
+pos:  147       A: 20.6546%     C: 31.7067%     G: 30.1578%     T: 17.4808%     Other: 0.0029%
+pos:  148       A: 21.5346%     C: 31.1507%     G: 29.0334%     T: 18.2814%     Other: 0.0005%
+pos:  149       A: 20.7603%     C: 31.9880%     G: 29.4433%     T: 17.8083%     Other: 0.0000%
 ```

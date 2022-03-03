@@ -13,7 +13,9 @@ struct Args {
 
 fn main() {
     let args = Args::parse();
-    let qual_by_pos = lib::processing::process_fastq(&args.path);
+    let (qual_by_pos, base_by_pos) = lib::processing::process_fastq(&args.path);
     lib::report::print_report_header(&args.path);
-    lib::report::print_qual_by_position_report(qual_by_pos);
+    lib::report::print_qual_by_position_report(&qual_by_pos);
+    lib::report::print_base_overall_report(&base_by_pos);
+    lib::report::print_base_by_position_report(&base_by_pos);
 }

@@ -92,14 +92,41 @@ fn create_quality_by_pos_report(seq_position_scores: Vec<Vec<u32>>) -> QualityBy
     }
 }
 
-pub fn process_fastq(path: &String) -> QualityByPosition {
+fn create_base_by_position_report(seq_position_bases: Vec<Vec<u32>>) -> BaseByPosition {
+    let seq_position_bases_t = transpose2(seq_position_bases);
+    return BaseByPosition {
+        a_bases: seq_position_bases_t[0].clone(),
+        c_bases: seq_position_bases_t[1].clone(),
+        g_bases: seq_position_bases_t[2].clone(),
+        t_bases: seq_position_bases_t[3].clone(),
+        other_bases: seq_position_bases_t[4].clone(),
+    };
+}
+
+fn transpose2<T>(v: Vec<Vec<T>>) -> Vec<Vec<T>> {
+    assert!(!v.is_empty());
+    let len = v[0].len();
+    let mut iters: Vec<_> = v.into_iter().map(|n| n.into_iter()).collect();
+    (0..len)
+        .map(|_| {
+            iters
+                .iter_mut()
+                .map(|n| n.next().unwrap())
+                .collect::<Vec<T>>()
+        })
+        .collect()
+}
+
+pub fn process_fastq(path: &String) -> (QualityByPosition, BaseByPosition) {
     let mut reader = load_fastq(path);
     let mut seq_position_scores: Vec<Vec<u32>> = Vec::new();
+    let mut seq_position_bases: Vec<Vec<u32>> = Vec::new();
 
     while let Some(record) = reader.next() {
         let seqrec = record.expect("invalid record");
         let mut i = 0;
         let mut qual_iter = seqrec.qual().unwrap().iter();
+        let mut seq_iter = seqrec.raw_seq().iter();
         while let Some(qual) = qual_iter.next() {
             if i >= seq_position_scores.len() {
                 seq_position_scores.push(Vec::new());
@@ -107,10 +134,32 @@ pub fn process_fastq(path: &String) -> QualityByPosition {
             seq_position_scores[i].push(*qual as u32 - 33);
             i += 1;
         }
+
+        let mut i = 0;
+        while let Some(base) = seq_iter.next() {
+            if i >= seq_position_bases.len() {
+                seq_position_bases.push(vec![0, 0, 0, 0, 0]);
+            }
+            if [A, AA].contains(base) {
+                seq_position_bases[i][0] += 1;
+            } else if [C, CC].contains(base) {
+                seq_position_bases[i][1] += 1;
+            } else if [G, GG].contains(base) {
+                seq_position_bases[i][2] += 1;
+            } else if [T, TT].contains(base) {
+                seq_position_bases[i][3] += 1;
+            } else {
+                seq_position_bases[i][4] += 1;
+            }
+            i += 1;
+        }
     }
     // sort here to avoid clone later
     for scores in seq_position_scores.iter_mut() {
         scores.rdxsort();
     }
-    create_quality_by_pos_report(seq_position_scores)
+    (
+        create_quality_by_pos_report(seq_position_scores),
+        create_base_by_position_report(seq_position_bases),
+    )
 }
