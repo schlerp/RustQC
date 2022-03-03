@@ -2,6 +2,7 @@ use bio::io::fastq;
 use rdxsort::*; // std sort was too slow for large vecs
 use std::fs::File;
 use std::io::BufReader;
+use flate2::bufread;
 
 const A: u8 = 0x41;
 const C: u8 = 0x43;
@@ -12,10 +13,19 @@ const CC: u8 = 0x63;
 const GG: u8 = 0x67;
 const TT: u8 = 0x74;
 
+fn get_fastq_reader(path: &String) -> Box<dyn (::std::io::Read)> {
+    if path.ends_with(".gz") {
+        let f = fs::File::open(path).unwrap();
+        Box::new(bufread::MultiGzDecoder::new(BufReader::new(f)).unwrap())
+    } else {
+        Box::new(fs::File::open(path).unwrap())
+    }
+}
+
 pub fn load_fastq(path: String) -> fastq::Reader<BufReader<File>> {
     println!("fetching file at {}!", path);
     let file_error = &format!("File {} not found!", path);
-    let f = File::open(path).expect(file_error);
+    let f = get_fastq_reader(&path);
     fastq::Reader::new(f)
 }
 
