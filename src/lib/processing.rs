@@ -15,7 +15,7 @@ const GG: u8 = 0x67;
 const TT: u8 = 0x74;
 
 pub fn load_fastq(path: &String) -> Box<dyn FastxReader> {
-    println!("fetching file at {}!", path);
+    //println!("fetching file at {}!", path);
     let file_error = &format!("File {} not found!", path);
     parse_fastx_file(&path).expect(file_error)
 }
