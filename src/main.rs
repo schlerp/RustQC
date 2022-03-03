@@ -13,5 +13,7 @@ struct Args {
 
 fn main() {
     let args = Args::parse();
-    lib::process_fastq(args.path);
+    let qual_by_pos = lib::processing::process_fastq(&args.path);
+    lib::report::print_report_header(&args.path);
+    lib::report::print_qual_by_position_report(qual_by_pos);
 }
