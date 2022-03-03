@@ -11,10 +11,10 @@ pub fn print_qual_by_position_report(qual_by_position: &QualityByPosition) {
     print!("Quality by Sequence Position\n");
     print!("----------------------------\n\n");
     print!("Median takes highest precedence, followed by q1/q3 finally followed by min/max.\n\n");
-    print!("                            <-----[     |     ]----->\n");
-    print!("                           min   q1   median  q3   max\n\n");
-    print!("         |          1         2         3         4         |\n");
-    print!("         |01234567890123456789012345678901234567890123456789|\n");
+    print!("                       <-----[     |     ]----->\n");
+    print!("                      min   q1   median  q3   max\n\n");
+    print!("          |          1         2         3         4         |\n");
+    print!("          |01234567890123456789012345678901234567890123456789|\n");
     let mut i = 0;
     while i < qual_by_position.seq_position_means.len() {
         let min_space = qual_by_position.seq_position_mins[i] as usize;
@@ -63,7 +63,7 @@ pub fn print_qual_by_position_report(qual_by_position: &QualityByPosition) {
         );
         println!(
             // "location {:3}: |{}| (n={},min={},q1={},median={},mean={},q3={},max={})",
-            "pos {:3}: |{}| (n={}, mean={:.2})",
+            "pos {:4}: |{}| (n={}, mean={:.2})",
             i,
             row_string,
             qual_by_position.seq_position_ns[i],
