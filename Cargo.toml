@@ -1,5 +1,11 @@
 [package]
 name = "rustqc"
+authors = ["Patrick Coffey"]
+description = "A quality checking tool for fastq files like FastQC except its implemented in rust and outputs its QC's as plain text."
+repository = "https://github.com/schlerp/rustqc"
+license-file = "LICENSE"
+keywords = ["bio", "fastq", "dna", "quality check", "QC", "sequence"]
+categories = ["science", "command-line-utilities", "parsing"]
 version = "0.1.0"
 edition = "2021"
 
