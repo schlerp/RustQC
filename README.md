@@ -6,9 +6,13 @@ It's a quality checking tool for fastq files like FastQC except its implemented 
 rustqc --path /path/to/file.fastq[.gz]
 ```
 
-Currently very alpha but showing some promising speed and I personally really like ASCII charts. Currently only implementing a few QC checks which are the quality by position report, overall base proportions and base proportion by position. See example output below for a 400MB fastq.gz (1.8Gb unzipped) file processed on my laptop in ~31 seconds.
+Currently very alpha but showing some promising speed and I personally really like ASCII charts. Currently only implementing a few QC checks which are the quality by position report, overall base proportions and base proportion by position. See example output below for a 443.5MB fastq.gz (1.83GB unzipped) file processed on my laptop in 27.02 secs.
 
 ```
+time rustqc --path /tmp/test.fastq.gz
+
+
+
 RustQC Report
 =============
 
@@ -121,4 +125,14 @@ pos:  146       A: 20.5527%     C: 32.1561%     G: 29.5301%     T: 17.7611%     
 pos:  147       A: 20.6546%     C: 31.7067%     G: 30.1578%     T: 17.4808%     Other: 0.0029%
 pos:  148       A: 21.5346%     C: 31.1507%     G: 29.0334%     T: 18.2814%     Other: 0.0005%
 pos:  149       A: 20.7603%     C: 31.9880%     G: 29.4433%     T: 17.8083%     Other: 0.0000%
+
+
+________________________________________________________
+Executed in   27.02 secs    fish           external
+   usr time   24.17 secs    0.12 millis   24.17 secs
+   sys time    2.80 secs    1.06 millis    2.80 secs
 ```
+
+## Authors
+
+- Patrick Coffey

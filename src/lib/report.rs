@@ -1,20 +1,20 @@
 use super::structs::*;
 
-pub fn print_report_header(path: &String) {
-    print!("RustQC Report\n");
-    print!("=============\n\n");
+pub fn print_report_header(path: &str) {
+    println!("RustQC Report");
+    println!("=============\n");
     println!("File: {}", path);
-    print!("\n");
+    println!();
 }
 
 pub fn print_qual_by_position_report(qual_by_position: &QualityByPosition) {
-    print!("Quality by Sequence Position\n");
-    print!("----------------------------\n\n");
-    print!("Median takes highest precedence, followed by q1/q3 finally followed by min/max.\n\n");
-    print!("                       <-----[     |     ]----->\n");
-    print!("                      min   q1   median  q3   max\n\n");
-    print!("          |          1         2         3         4         |\n");
-    print!("          |01234567890123456789012345678901234567890123456789|\n");
+    println!("Quality by Sequence Position");
+    println!("----------------------------\n");
+    println!("Median takes highest precedence, followed by q1/q3 finally followed by min/max.\n");
+    println!("                       <-----[     |     ]----->");
+    println!("                      min   q1   median  q3   max\n");
+    println!("          |          1         2         3         4         |");
+    println!("          |01234567890123456789012345678901234567890123456789|");
     let mut i = 0;
     while i < qual_by_position.seq_position_means.len() {
         let min_space = qual_by_position.seq_position_mins[i] as usize;
@@ -27,7 +27,7 @@ pub fn print_qual_by_position_report(qual_by_position: &QualityByPosition) {
         let q3_max_space = qual_by_position.seq_position_maxs[i] as usize
             - qual_by_position.seq_position_q3s[i].floor() as usize;
         let max_space = 50 - qual_by_position.seq_position_maxs[i] as usize;
-        let mut row_string = String::from(format!(
+        let mut row_string = format!(
             "{}{}{}{}{}{}",
             " ".repeat(min_space),
             "-".repeat(min_q1_space),
@@ -35,7 +35,7 @@ pub fn print_qual_by_position_report(qual_by_position: &QualityByPosition) {
             " ".repeat(median_q3_space),
             "-".repeat(q3_max_space),
             " ".repeat(max_space)
-        ));
+        );
         row_string.replace_range(
             qual_by_position.seq_position_mins[i] as usize
                 ..qual_by_position.seq_position_mins[i] as usize + 1,
@@ -62,28 +62,22 @@ pub fn print_qual_by_position_report(qual_by_position: &QualityByPosition) {
             "|",
         );
         println!(
-            // "location {:3}: |{}| (n={},min={},q1={},median={},mean={},q3={},max={})",
             "pos {:4}: |{}| (n={}, mean={:.2})",
             i,
             row_string,
             qual_by_position.seq_position_ns[i],
-            // qc_report.seq_position_mins[i],
-            // qc_report.seq_position_q1s[i],
-            // qc_report.seq_position_medians[i],
             qual_by_position.seq_position_means[i],
-            // qc_report.seq_position_q3s[i],
-            // qc_report.seq_position_maxs[i],
         );
         i += 1;
     }
-    print!("         |01234567890123456789012345678901234567890123456789|\n");
-    print!("         |          1         2         3         4         |\n");
-    print!("\n\n");
+    println!("         |01234567890123456789012345678901234567890123456789|");
+    println!("         |          1         2         3         4         |");
+    println!("\n");
 }
 
 pub fn print_base_overall_report(base_by_position: &BaseByPosition) {
-    print!("Base Proportion Overall\n");
-    print!("-----------------------\n\n");
+    println!("Base Proportion Overall");
+    println!("-----------------------\n");
     let sum_a: f32 = base_by_position.a_bases.iter().sum::<u32>() as f32;
     let sum_c: f32 = base_by_position.c_bases.iter().sum::<u32>() as f32;
     let sum_g: f32 = base_by_position.g_bases.iter().sum::<u32>() as f32;
@@ -99,12 +93,12 @@ pub fn print_base_overall_report(base_by_position: &BaseByPosition) {
         (sum_t / total) * 100.0,
         (sum_other / total) * 100.0,
     );
-    print!("\n\n");
+    println!("\n");
 }
 
 pub fn print_base_by_position_report(base_by_position: &BaseByPosition) {
-    print!("Base Proportion by Sequence Position\n");
-    print!("------------------------------------\n\n");
+    println!("Base Proportion by Sequence Position");
+    println!("------------------------------------\n");
     let mut i = 0;
     while i < base_by_position.a_bases.len() {
         let sum = base_by_position.a_bases[i]
@@ -122,5 +116,5 @@ pub fn print_base_by_position_report(base_by_position: &BaseByPosition) {
         );
         i += 1;
     }
-    print!("\n\n");
+    println!("\n");
 }

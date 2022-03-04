@@ -14,7 +14,7 @@ const CC: u8 = 0x63;
 const GG: u8 = 0x67;
 const TT: u8 = 0x74;
 
-pub fn load_fastq(path: &String) -> Box<dyn FastxReader> {
+pub fn load_fastq(path: &str) -> Box<dyn FastxReader> {
     //println!("fetching file at {}!", path);
     let file_error = &format!("File {} not found!", path);
     parse_fastx_file(&path).expect(file_error)
@@ -47,19 +47,19 @@ fn calc_median_q1_q3(seq_position_scores: &[Vec<u32>]) -> (Vec<f32>, Vec<f32>, V
 
         // handle medians
         if mid % 2 == 0 {
-            medians.push((scores[mid] + scores[mid + 1]) as f32 / 2 as f32);
+            medians.push((scores[mid] + scores[mid + 1]) as f32 / 2.0);
         } else {
             medians.push(scores[mid] as f32)
         }
         // handle q1s
         if q1 % 2 == 0 {
-            q1s.push((scores[q1] + scores[q1 + 1]) as f32 / 2 as f32);
+            q1s.push((scores[q1] + scores[q1 + 1]) as f32 / 2.0);
         } else {
             q1s.push(scores[q1] as f32)
         }
         // handle q3s
         if q3 % 2 == 0 {
-            q3s.push((scores[q3] + scores[q3 + 1]) as f32 / 2 as f32);
+            q3s.push((scores[q3] + scores[q3 + 1]) as f32 / 2.0);
         } else {
             q3s.push(scores[q3] as f32)
         }
@@ -78,9 +78,9 @@ fn calc_mins_maxs(seq_position_scores: &[Vec<u32>]) -> (Vec<u32>, Vec<u32>) {
 }
 
 fn create_quality_by_pos_report(seq_position_scores: Vec<Vec<u32>>) -> QualityByPosition {
-    let (means, ns) = calc_means_ns(&seq_position_scores.as_slice());
-    let (mins, maxs) = calc_mins_maxs(&seq_position_scores.as_slice());
-    let (medians, q1s, q3s) = calc_median_q1_q3(&seq_position_scores.as_slice());
+    let (means, ns) = calc_means_ns(seq_position_scores.as_slice());
+    let (mins, maxs) = calc_mins_maxs(seq_position_scores.as_slice());
+    let (medians, q1s, q3s) = calc_median_q1_q3(seq_position_scores.as_slice());
     QualityByPosition {
         seq_position_means: means,
         seq_position_medians: medians,
@@ -94,13 +94,13 @@ fn create_quality_by_pos_report(seq_position_scores: Vec<Vec<u32>>) -> QualityBy
 
 fn create_base_by_position_report(seq_position_bases: Vec<Vec<u32>>) -> BaseByPosition {
     let seq_position_bases_t = transpose2(seq_position_bases);
-    return BaseByPosition {
+    BaseByPosition {
         a_bases: seq_position_bases_t[0].clone(),
         c_bases: seq_position_bases_t[1].clone(),
         g_bases: seq_position_bases_t[2].clone(),
         t_bases: seq_position_bases_t[3].clone(),
         other_bases: seq_position_bases_t[4].clone(),
-    };
+    }
 }
 
 fn transpose2<T>(v: Vec<Vec<T>>) -> Vec<Vec<T>> {
@@ -117,26 +117,23 @@ fn transpose2<T>(v: Vec<Vec<T>>) -> Vec<Vec<T>> {
         .collect()
 }
 
-pub fn process_fastq(path: &String) -> (QualityByPosition, BaseByPosition) {
+pub fn process_fastq(path: &str) -> (QualityByPosition, BaseByPosition) {
     let mut reader = load_fastq(path);
     let mut seq_position_scores: Vec<Vec<u32>> = Vec::new();
     let mut seq_position_bases: Vec<Vec<u32>> = Vec::new();
 
     while let Some(record) = reader.next() {
         let seqrec = record.expect("invalid record");
-        let mut i = 0;
-        let mut qual_iter = seqrec.qual().unwrap().iter();
-        let mut seq_iter = seqrec.raw_seq().iter();
-        while let Some(qual) = qual_iter.next() {
+        let qual_iter = seqrec.qual().unwrap().iter();
+        let seq_iter = seqrec.raw_seq().iter();
+        for (i, qual) in qual_iter.enumerate() {
             if i >= seq_position_scores.len() {
                 seq_position_scores.push(Vec::new());
             }
             seq_position_scores[i].push(*qual as u32 - 33);
-            i += 1;
         }
 
-        let mut i = 0;
-        while let Some(base) = seq_iter.next() {
+        for (i, base) in seq_iter.enumerate() {
             if i >= seq_position_bases.len() {
                 seq_position_bases.push(vec![0, 0, 0, 0, 0]);
             }
@@ -151,7 +148,6 @@ pub fn process_fastq(path: &String) -> (QualityByPosition, BaseByPosition) {
             } else {
                 seq_position_bases[i][4] += 1;
             }
-            i += 1;
         }
     }
     // sort here to avoid clone later
